@@ -1,0 +1,12 @@
+{
+  "name": "profilefetch",
+  "version": "2.0.0",
+  "description": "Generate a pixel-perfect fastfetch-style SVG for your GitHub profile README",
+  "scripts": {
+    "generate": "node src/generate.js",
+    "build":    "node src/generate.js"
+  },
+  "keywords": ["github", "readme", "fastfetch", "profilefetch", "profile"],
+  "license": "MIT",
+  "engines": { "node": ">=14" }
+}
