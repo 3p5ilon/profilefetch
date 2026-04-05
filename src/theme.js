@@ -57,7 +57,7 @@ module.exports = {
 
   // Layout
   layout: {
-    minWidth: 800, // Base width
+    width: 820, 
     paddingLeft: 32,
     paddingRight: 32,
     paddingTop: 34,

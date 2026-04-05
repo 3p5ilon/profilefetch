@@ -11,7 +11,7 @@ module.exports = {
     {
       key: "Langs",
       value: "Python · TypeScript · JavaScript · C++ · C",
-      color: "green",
+      color: "green", 
     },
     { key: "ML", value: "PyTorch · Transformers · XGBoost", color: "green" },
     { key: "Backend", value: "FastAPI · gRPC", color: "teal" },
