@@ -52,6 +52,7 @@ module.exports = {
     family:
       "'JetBrainsMono Nerd Font', 'JetBrains Mono', 'Courier New', monospace",
     size: 13,
+    keyWeight: 600, // Specific font weight for info keys
     charRatio: 0.602,
   },
 

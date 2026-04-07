@@ -14,14 +14,17 @@ const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
 const esc = (s) => String(s).replace(/[&<>"]/g, (m) => escMap[m]);
 const color = (name) => palette[name] ?? palette.text;
 
-const { size: fontSize, charRatio, family } = font;
+const { size: fontSize, charRatio, family, keyWeight } = font;
 const charWidth = fontSize * charRatio;
 const fontFamily = esc(family);
 
 const { lineHeight, paddingTop: startY, width: svgW } = layout;
 
-const svgText = (x, y, fill, content, bold = false, size = fontSize) =>
-  `<text x="${x}" y="${y}" fill="${fill}" font-family="${fontFamily}" font-size="${size}" xml:space="preserve"${bold ? ' font-weight="700"' : ""}>${esc(content)}</text>`;
+const svgText = (x, y, fill, content, bold = false, size = fontSize) => {
+  const sizeAttr = size !== fontSize ? ` font-size="${size}"` : "";
+  const weightAttr = bold ? ` font-weight="${keyWeight}"` : "";
+  return `<text x="${x}" y="${y}" fill="${fill}" class="f"${sizeAttr}${weightAttr} xml:space="preserve">${esc(content)}</text>`;
+};
 
 const strPx = (str) => Math.round(str.length * charWidth);
 const spacePx = strPx(" "); // Cached space width
@@ -206,7 +209,10 @@ const svgH = Math.max(
 
 const svg = [
   `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`,
-  `  <style>@import url('${font.import.replace(/&/g, "&amp;")}');</style>`,
+  `  <style>`,
+  `    @import url('${font.import.replace(/&/g, "&amp;")}');`,
+  `    .f { font-family: ${fontFamily}; font-size: ${fontSize}px; }`,
+  `  </style>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="${theme.bg}"/>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="none" stroke="${theme.border}" stroke-width="1"/>`,
   ...assetEls.map(el => `  ${el}`),
