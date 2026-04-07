@@ -1,32 +1,53 @@
 # ProfileFetch
 
-A pixel-perfect, fully dynamic fastfetch style SVG generator for your GitHub Profile README.
-
+A terminal fastfetch style SVG generator for your GitHub Profile readme.
 ![preview](output/profilefetch.svg)
 
-## Setup
+## Quick Setup
 
-To set this up as a beautiful dashboard for your own GitHub global profile, use this codebase as a template:
-
-1. **Fork or Template:** Click the **Use this template** button (or fork this repo) to your personal account.
-2. **Customize Your Profile:** 
-   * Edit `src/config.js` to change your data streams.
-   * Edit `src/ascii.txt` to drop in your custom ascii art.
-   * Edit `src/theme.js` to tweak styling and color palettes.
-3. **Generate:** Run the core engine to build your scalable SVG.
+1. Fork or use as template (repo name = your GitHub username)
+2. Edit the source files in `src/` (see Customization below).
+3. Generate your SVG with one command:
    ```bash
    node src/generate.js
    ```
 
-## Adding to your Profile README
+## 🛠️ Customization
 
-In your special GitHub profile repository (`YOUR_USERNAME/YOUR_USERNAME`), embed the produced SVG linking directly to your fork's raw output:
+### 📝 Content (`src/config.js`)
 
-```html
+| Option               | Description                                   |
+| -------------------- | --------------------------------------------- |
+| `info`               | Array of stats with custom keys & colors      |
+| `ascii.type`         | `"text"` or `"image"`                         |
+| `ascii.fontSize`     | Scale ASCII art independently                 |
+| `"break"`            | Manual gap (add anywhere in array)            |
+| `blankBetweenGroups` | Auto-gap when colors change (`true`/`false`)  |
+| **Text Mode**        | ASCII file at `src/ascii.txt`                 |
+| **Image Mode**       | Image at `src/profile.png` (PNG/JPG → Base64) |
+
+### 🎨 Theme (`src/theme.js`)
+
+| Option    | Description                                                                              |
+| --------- | ---------------------------------------------------------------------------------------- |
+| `palette` | Full hex control (default: [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)) |
+| `layout`  | `width`, `padding`, `columnGap`                                                          |
+| `font`    | Any Google Font (default: [JetBrains Mono](https://www.jetbrains.com/lp/mono/))          |
+
+## 🖇️ Deployment
+
+Add to `username/README.md` (repo must match your GitHub username)
+
+```md
 <div align="center">
-  <img src="https://raw.githubusercontent.com/YOUR_USERNAME/profilefetch/main/output/profilefetch.svg" alt="ProfileFetch" />
+  <img
+    src="https://raw.githubusercontent.com/YOUR_USERNAME/profilefetch/main/output/profilefetch.svg"
+    alt="ProfileFetch"
+  />
 </div>
 ```
 
 ## License
+
 MIT
+

@@ -23,19 +23,64 @@ const fontFamily = esc(family);
 // Layout Metrics
 const { lineHeight, paddingTop: startY, width: svgW } = layout;
 
-const svgText = (x, y, fill, content, bold = false) =>
-  `<text x="${x}" y="${y}" fill="${fill}" font-family="${fontFamily}" font-size="${fontSize}" xml:space="preserve"${bold ? ' font-weight="700"' : ""}>${esc(content)}</text>`;
+const svgText = (x, y, fill, content, bold = false, size = fontSize) =>
+  `<text x="${x}" y="${y}" fill="${fill}" font-family="${fontFamily}" font-size="${size}" xml:space="preserve"${bold ? ' font-weight="700"' : ""}>${esc(content)}</text>`;
 
 const strPx = (str) => Math.round(str.length * charWidth);
 const spacePx = strPx(" "); // Cached space width
 
-// Parse ASCII art dynamically
-const asciiFile = path.join(ROOT, "src", cfg.ascii.file);
-const asciiLines = fs.readFileSync(asciiFile, "utf8").trimEnd().split(/\r?\n/);
+// --- Handle Graphic Asset Loading --- 
+const { type: asciiType, text: textCfg, image: imageCfg } = cfg.ascii;
+const isImageMode = asciiType === "image";
 
-// --- Compute Dynamic Info Column X Position ---
-const maxAsciiLen = Math.max(0, ...asciiLines.map((line) => line.length));
-const maxAsciiPx = Math.round(maxAsciiLen * charWidth);
+let asciiLines = [];
+let embeddedImage = "";
+let maxAsciiPx = 0;
+let asciiContentHeight = 0;
+
+if (isImageMode) {
+  // Mode: High-quality Image Embedding (Base64)
+  const imgPath = path.resolve(ROOT, "src", imageCfg.path);
+  const ext = path.extname(imgPath).slice(1).toLowerCase() || "png";
+  const buffer = fs.readFileSync(imgPath);
+  embeddedImage = `data:image/${ext};base64,${buffer.toString("base64")}`;
+  maxAsciiPx = imageCfg.width;
+  asciiContentHeight = imageCfg.height;
+} else {
+  // Mode: Classic ASCII Art Parsing
+  const asciiFile = path.resolve(ROOT, "src", textCfg.file);
+  const rawLines = fs.readFileSync(asciiFile, "utf8").trimEnd().split(/\r?\n/);
+
+  // Strip trailing invisible blanks and visually crop ASCII bounding box
+  asciiLines = rawLines.map(line => line.replace(/[\s\u2800]+$/, ""));
+  
+  let minLeading = Infinity;
+  for (const line of asciiLines) {
+    if (line.length === 0) continue;
+    const match = line.match(/^[\s\u2800]+/);
+    const leadingCount = match ? match[0].length : 0;
+    if (leadingCount < minLeading) minLeading = leadingCount;
+  }
+  if (minLeading === Infinity) minLeading = 0;
+
+  if (minLeading > 0) {
+    asciiLines = asciiLines.map(line => line.length >= minLeading ? line.substring(minLeading) : line);
+  }
+
+  // Calculate section-specific metrics for independent ASCII scaling
+  const asciiFontSize = textCfg.fontSize > 0 ? textCfg.fontSize : fontSize;
+  const asciiCharWidth = asciiFontSize * charRatio;
+  const asciiLineHeight = textCfg.fontSize > 0 ? Math.round((textCfg.fontSize / fontSize) * lineHeight) : lineHeight;
+
+  const maxChars = Math.max(0, ...asciiLines.map(line => line.length));
+  maxAsciiPx = Math.round(maxChars * asciiCharWidth);
+  asciiContentHeight = asciiLines.length * asciiLineHeight;
+  
+  // Store height-scaling meta for the rendering loop
+  textCfg._render = { fontSize: asciiFontSize, lineHeight: asciiLineHeight };
+}
+
+// Compute Info Column X Position
 const infoColX = layout.paddingLeft + maxAsciiPx + layout.columnGap;
 
 const buildRows = (rawInfo, autoBlank) => {
@@ -136,13 +181,15 @@ if (options.showSwatches) {
   );
 }
 
-const asciiEls = asciiLines.map((line, i) =>
-  svgText(layout.paddingLeft, startY + i * lineHeight, color(cfg.ascii.color), line)
-);
+const assetEls = isImageMode
+  ? [`<image x="${layout.paddingLeft}" y="${startY}" width="${imageCfg.width}" height="${imageCfg.height}" href="${embeddedImage}"/>`]
+  : asciiLines.map((line, i) =>
+      svgText(layout.paddingLeft, startY + i * textCfg._render.lineHeight, color(textCfg.color), line, false, textCfg._render.fontSize)
+    );
 
 const svgH = Math.max(
   startY + row * lineHeight + (options.showSwatches ? lineHeight + 28 : 0) + layout.paddingBottom,
-  startY + asciiLines.length * lineHeight + layout.paddingBottom
+  startY + asciiContentHeight + layout.paddingBottom
 );
 
 const svg = [
@@ -150,7 +197,7 @@ const svg = [
   `  <style>@import url('${font.import.replace(/&/g, "&amp;")}');</style>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="${theme.bg}"/>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="none" stroke="${theme.border}" stroke-width="1"/>`,
-  ...asciiEls.map(el => `  ${el}`),
+  ...assetEls.map(el => `  ${el}`),
   ...infoEls.map(el => `  ${el}`),
   ...swatchEls.map(el => `  ${el}`),
   `</svg>`,
