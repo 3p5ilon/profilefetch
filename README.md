@@ -1,6 +1,7 @@
 # ProfileFetch
 
 A terminal fastfetch style SVG generator for your GitHub Profile readme.
+
 ![preview](output/profilefetch.svg)
 
 ## Quick Setup
@@ -8,31 +9,56 @@ A terminal fastfetch style SVG generator for your GitHub Profile readme.
 1. Fork or use as template (repo name = your GitHub username)
 2. Edit the source files in `src/` (see Customization below).
 3. Generate your SVG with one command:
-   ```bash
-   node src/generate.js
-   ```
+
+```bash
+node src/generate.js
+```
 
 ## 🛠️ Customization
 
-### 📝 Content (`src/config.js`)
+### 📝 `src/config.js` - Content
 
-| Option               | Description                                   |
-| -------------------- | --------------------------------------------- |
-| `info`               | Array of stats with custom keys & colors      |
-| `ascii.type`         | `"text"` or `"image"`                         |
-| `ascii.fontSize`     | Scale ASCII art independently                 |
-| `"break"`            | Manual gap (add anywhere in array)            |
-| `blankBetweenGroups` | Auto-gap when colors change (`true`/`false`)  |
-| **Text Mode**        | ASCII file at `src/ascii.txt`                 |
-| **Image Mode**       | Image at `src/profile.png` (PNG/JPG → Base64) |
+#### `info` Array - Your Config
+
+| Option                  | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| `{ key, value, color }` | Single stat line                                                 |
+| `[ { ... }, { ... } ]`  | Nested array = auto adds a break between groups                  |
+| `blankBetweenGroups`    | `true` / `false` - Auto-gap when colors differ within same group |
+
+#### `ascii` - Your Logo/Profile
+
+| Mode           | Description                                                                       |
+| -------------- | --------------------------------------------------------------------------------- |
+| `ascii.type`   | `"text"` or `"image"`                                                             |
+| **Text Mode**  | ASCII file at `src/ascii.txt` - adjust size with `ascii.fontSize`                 |
+| **Image Mode** | Image at `src/profile.png` (PNG/JPG → Base64) - customize with `width` & `height` |
+
+**Example:**
+
+```js
+info: [
+  // Group 1
+  { key: "OS", value: "Arch Linux", color: "blue" },
+  { key: "Shell", value: "zsh", color: "blue" },
+
+  // Auto break here (nested array)
+
+  // Group 2
+  [
+    { key: "Langs", value: "Python · TypeScript · C++ · Astro", color: "green" },
+    { key: "ML", value: "PyTorch · Transformers · XGBoost", color: "green" },
+  ],
+],
+```
 
 ### 🎨 Theme (`src/theme.js`)
 
-| Option    | Description                                                                              |
-| --------- | ---------------------------------------------------------------------------------------- |
-| `palette` | Full hex control (default: [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)) |
-| `layout`  | `width`, `padding`, `columnGap`                                                          |
-| `font`    | Any Google Font (default: [JetBrains Mono](https://www.jetbrains.com/lp/mono/))          |
+| Option    | Description                                                                               |
+| --------- | ----------------------------------------------------------------------------------------- |
+| `palette` | Full hex control (currently [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)) |
+| `layout`  | `width`, `padding`, `columnGap`, `lineHeight`                                             |
+| `font`    | Any Google Font (currently [JetBrains Mono](https://www.jetbrains.com/lp/mono/))          |
 
 ## 🖇️ Deployment
 
@@ -50,4 +76,3 @@ Add to `username/README.md` (repo must match your GitHub username)
 ## License
 
 MIT
-
