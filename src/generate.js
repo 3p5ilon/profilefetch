@@ -10,17 +10,14 @@ const { theme, font, layout } = require(path.join(ROOT, "src", "theme.js"));
 const { palette } = theme;
 const { options } = cfg;
 
-// Utilities
 const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
 const esc = (s) => String(s).replace(/[&<>"]/g, (m) => escMap[m]);
 const color = (name) => palette[name] ?? palette.text;
 
-// Font Metrics
 const { size: fontSize, charRatio, family } = font;
 const charWidth = fontSize * charRatio;
 const fontFamily = esc(family);
 
-// Layout Metrics
 const { lineHeight, paddingTop: startY, width: svgW } = layout;
 
 const svgText = (x, y, fill, content, bold = false, size = fontSize) =>
@@ -29,7 +26,7 @@ const svgText = (x, y, fill, content, bold = false, size = fontSize) =>
 const strPx = (str) => Math.round(str.length * charWidth);
 const spacePx = strPx(" "); // Cached space width
 
-// --- Handle Graphic Asset Loading --- 
+// Handle Graphic Asset Loading
 const { type: asciiType, text: textCfg, image: imageCfg } = cfg.ascii;
 const isImageMode = asciiType === "image";
 
@@ -85,21 +82,36 @@ const infoColX = layout.paddingLeft + maxAsciiPx + layout.columnGap;
 
 const buildRows = (rawInfo, autoBlank) => {
   let prevColor = null;
-  return rawInfo.flatMap((item) => {
-    if (!item || item === "break") {
+  const result = [];
+
+  for (const entry of rawInfo) {
+    // If entry is a sub-array, treat it as a logical "Block" with automatic gapping
+    if (Array.isArray(entry)) {
+      if (result.length > 0 && result[result.length - 1].type !== "blank") {
+        result.push({ type: "blank" });
+      }
+      for (const item of entry) {
+        result.push({ type: "data", key: item.key, value: item.value, keyColor: item.color });
+      }
+      prevColor = null; // Reset color tracking between logical blocks
+      continue;
+    }
+
+    // Standard item processing (flat entries or manual breaks)
+    if (!entry || entry === "break") {
+      result.push({ type: "blank" });
       prevColor = null;
-      return [{ type: "blank" }];
+      continue;
+    }
+
+    if (autoBlank && prevColor && entry.color !== prevColor) {
+      result.push({ type: "blank" });
     }
     
-    const rows = [];
-    if (autoBlank && prevColor && item.color !== prevColor) {
-      rows.push({ type: "blank" });
-    }
-    
-    rows.push({ type: "data", key: item.key, value: item.value, keyColor: item.color });
-    prevColor = item.color;
-    return rows;
-  });
+    result.push({ type: "data", key: entry.key, value: entry.value, keyColor: entry.color });
+    prevColor = entry.color;
+  }
+  return result;
 };
 
 const renderedRows = buildRows(cfg.info, options.blankBetweenGroups);

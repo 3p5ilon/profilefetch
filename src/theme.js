@@ -62,7 +62,7 @@ module.exports = {
     paddingRight: 32,
     paddingTop: 34,
     paddingBottom: 34,
-    columnGap: 48, // Spacing between ascii and columns
-    lineHeight: 19, // Vertical spacing between text entries
+    columnGap: 32, // Space between ascii/img and columns
+    lineHeight: 19, // Vertical space between text entries
   },
 };
