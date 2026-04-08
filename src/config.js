@@ -4,22 +4,59 @@ module.exports = {
 
   info: [
     [
-      { key: "User",    value: "Ɛpsilon",            color: "red"   },
-      { key: "OS",      value: "macOS · Arch Linux", color: "red"   },
-      { key: "Editor",  value: "Neovim · Zed",       color: "peach" },
-   
-      { key: "Langs",
-      value: "Python · TypeScript · JavaScript · C++ · C · Astro · Bash · Lua",
-      color: "green",
-    },
-      { key: "ML",      value: "PyTorch · Transformers · XGBoost", color: "green" },
-   
-      { key: "API",     value: "FastAPI · gRPC",      color: "teal" },
-      { key: "Data",    value: "PostgreSQL · Redis",  color: "teal" },
-      { key: "Cloud",   value: "Docker · Linux · AWS",color: "teal" },
-   
-      { key: "Focus",   value: "Applied AI Systems",  color: "mauve" },
-      { key: "Site",    value: "3p5ilon.github.io",   color: "blue"  },
+      // Identity
+      { key: "User", value: "Ɛpsilon", color: "red" },
+      { key: "Host", value: "Mithril AI", color: "red" }, // company/org name
+      { key: "Kernel", value: "Applied AI systems", color: "red" }, // what you build/work on
+      
+      // {
+      //   key: "Interests",
+      //   value: "Philosophy · Sci-Fi · Cinema · Skateboarding",
+      //   color: "pink",
+      // },
+
+      // Environment
+      { key: "OS", value: "macOS · Arch Linux", color: "blue" },
+      { key: "Editor", value: "Neovim · Zed", color: "blue" },
+
+      // Languages
+      {
+        key: "Langs",
+        value: "Python · TypeScript · JavaScript · C++ · Bash · Lua",
+        color: "yellow",
+      },
+
+      // Web
+      {
+        key: "Frontend",
+        value: "Next.js · Astro · Tailwind · Shadcn",
+        color: "teal",
+      },
+      {
+        key: "Backend",
+        value: "Node.js · Express · Bun",
+        color: "teal",
+      },
+
+      // ML/AI
+      {
+        key: "ML",
+        value: "PyTorch · scikit-learn · LLMs · Agents · RAG · NLP",
+        color: "green",
+      },
+      {
+        key: "Tools",
+        value: "HuggingFace · Ollama · FastAPI · Streamlit ",
+        color: "green",
+      },
+
+      // Infrastructure
+      { key: "Database", value: "PostgreSQL · MySQL · Redis", color: "mauve" },
+      { key: "DevOps", value: "Docker · Linux · AWS · Bash", color: "mauve" },
+
+      // Contact
+      { key: "Site", value: "3p5ilon.github.io", color: "peach" },
+      { key: "Email", value: "log3p5ilon@gmail.com", color: "peach" },
     ],
   ],
 
