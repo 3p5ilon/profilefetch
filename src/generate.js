@@ -78,44 +78,28 @@ if (logoCfg.type === "image") {
 
 const infoColX = layout.paddingLeft + maxGraphicPx + layout.columnGap;
 
-// Row data processing logic
+/// Row data processing: flat list supports objects or null for spacers
 const processedRows = [];
-let prevColor = null;
+cfg.info.forEach((entry, i) => {
+  if (entry === null || entry === "break")
+    return processedRows.push({ type: "blank" });
 
-cfg.info.forEach((entry) => {
-  if (Array.isArray(entry)) {
-    if (
-      processedRows.length > 0 &&
-      processedRows[processedRows.length - 1].type !== "blank"
-    ) {
-      processedRows.push({ type: "blank" });
-    }
-    entry.forEach((i) =>
-      processedRows.push({
-        type: "data",
-        key: i.key,
-        value: i.value,
-        keyColor: i.color,
-      }),
-    );
-    prevColor = null;
-    return;
-  }
-  if (!entry || entry === "break") {
-    processedRows.push({ type: "blank" });
-    prevColor = null;
-    return;
-  }
-  if (options.blankBetweenGroups && prevColor && entry.color !== prevColor) {
+  // adds a blank row when the color changes between items
+  if (
+    options.blankBetweenGroups &&
+    i > 0 &&
+    cfg.info[i - 1] &&
+    entry.color !== cfg.info[i - 1].color
+  ) {
     processedRows.push({ type: "blank" });
   }
+
   processedRows.push({
     type: "data",
     key: entry.key,
     value: entry.value,
     keyColor: entry.color,
   });
-  prevColor = entry.color;
 });
 
 const infoEls = [];
@@ -191,7 +175,7 @@ if (options.showSwatches) {
 const assetEls =
   logoCfg.type === "image"
     ? [
-        `<image x="${layout.paddingLeft}" y="${startY}" width="${logoCfg.image.width}" height="${logoCfg.image.height}" href="${embeddedImage}"/>`,
+        `<image x="${layout.paddingLeft}" y="${startY}" width="${logoCfg.image.width}" height="${logoCfg.image.height}" xlink:href="${embeddedImage}"/>`,
       ]
     : [
         `<g transform="translate(${layout.paddingLeft},${startY}) scale(${logoScale}) translate(${-layout.paddingLeft},${-startY})">`,
@@ -211,7 +195,7 @@ const svgH =
   startY + Math.max(infoSideHeight, graphicHeight) + layout.paddingBottom;
 
 const svg = [
-  `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`,
+  `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`,
   `  <style>@import url('${font.import.replace(/&/g, "&amp;")}'); .f { font-family: ${fontFamily}; font-size: ${fontSize}px; }</style>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="${theme.bg}"/>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="none" stroke="${theme.border}" stroke-width="1"/>`,
