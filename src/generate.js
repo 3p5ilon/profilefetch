@@ -46,8 +46,9 @@ let logoScale = 1;
 
 if (logoCfg.type === "image") {
   const imgPath = path.resolve(ROOT, "src", logoCfg.image.path);
-  const ext = path.extname(imgPath).slice(1).toLowerCase() || "png";
-  embeddedImage = `data:image/${ext};base64,${fs.readFileSync(imgPath).toString("base64")}`;
+  const ext = path.extname(imgPath).slice(1).toLowerCase();
+  const mime = ext === "jpg" || ext === "jpeg" ? "jpeg" : "png";
+  embeddedImage = `data:image/${mime};base64,${fs.readFileSync(imgPath).toString("base64")}`;
   maxGraphicPx = logoCfg.image.width;
   graphicHeight = logoCfg.image.height;
 } else {
@@ -175,7 +176,7 @@ if (options.showSwatches) {
 const assetEls =
   logoCfg.type === "image"
     ? [
-        `<image x="${layout.paddingLeft}" y="${startY}" width="${logoCfg.image.width}" height="${logoCfg.image.height}" xlink:href="${embeddedImage}"/>`,
+        `<image x="${layout.paddingLeft}" y="${startY}" width="${logoCfg.image.width}" height="${logoCfg.image.height}" href="${embeddedImage}" xlink:href="${embeddedImage}" preserveAspectRatio="xMidYMid meet"/>`,
       ]
     : [
         `<g transform="translate(${layout.paddingLeft},${startY}) scale(${logoScale}) translate(${-layout.paddingLeft},${-startY})">`,
@@ -195,7 +196,7 @@ const svgH =
   startY + Math.max(infoSideHeight, graphicHeight) + layout.paddingBottom;
 
 const svg = [
-  `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`,
+  `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`,
   `  <style>@import url('${font.import.replace(/&/g, "&amp;")}'); .f { font-family: ${fontFamily}; font-size: ${fontSize}px; }</style>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="${theme.bg}"/>`,
   `  <rect width="${svgW}" height="${svgH}" rx="8" fill="none" stroke="${theme.border}" stroke-width="1"/>`,
