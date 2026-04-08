@@ -3,61 +3,59 @@ module.exports = {
   host: "3p5ilon",
 
   info: [
-    [
-      // Identity
-      { key: "User", value: "Ɛpsilon", color: "red" },
-      { key: "Host", value: "Mithril AI", color: "red" }, // company/org name
-      { key: "Kernel", value: "Applied AI systems", color: "red" }, // what you build/work on
-      
-      // {
-      //   key: "Interests",
-      //   value: "Philosophy · Sci-Fi · Cinema · Skateboarding",
-      //   color: "pink",
-      // },
+    // Identity
+    { key: "User", value: "Ɛpsilon", color: "red" },
+    { key: "Host", value: "Mithril AI", color: "red" }, // company/org name
+    { key: "Kernel", value: "Applied AI systems", color: "red" }, // what you build/work on
 
-      // Environment
-      { key: "OS", value: "macOS · Arch Linux", color: "blue" },
-      { key: "Editor", value: "Neovim · Zed", color: "blue" },
+    // {
+    //   key: "Interests",
+    //   value: "Philosophy · Sci-Fi · Cinema · Skateboarding",
+    //   color: "pink",
+    // },
 
-      // Languages
-      {
-        key: "Langs",
-        value: "Python · TypeScript · JavaScript · C++ · Bash · Lua",
-        color: "yellow",
-      },
+    // Environment
+    { key: "OS", value: "macOS · Arch Linux", color: "blue" },
+    { key: "Editor", value: "Neovim · Zed", color: "blue" },
 
-      // Web
-      {
-        key: "Frontend",
-        value: "Next.js · Astro · Tailwind · Shadcn",
-        color: "teal",
-      },
-      {
-        key: "Backend",
-        value: "Node.js · Express · Bun",
-        color: "teal",
-      },
+    // Languages
+    {
+      key: "Langs",
+      value: "Python · TypeScript · JavaScript · C++ · Bash · Lua",
+      color: "yellow",
+    },
 
-      // ML/AI
-      {
-        key: "ML",
-        value: "PyTorch · scikit-learn · LLMs · Agents · RAG · NLP",
-        color: "green",
-      },
-      {
-        key: "Tools",
-        value: "HuggingFace · Ollama · FastAPI · Streamlit ",
-        color: "green",
-      },
+    // Web
+    {
+      key: "Frontend",
+      value: "Next.js · Astro · Tailwind · Shadcn",
+      color: "teal",
+    },
+    {
+      key: "Backend",
+      value: "Node.js · Express · Bun",
+      color: "teal",
+    },
 
-      // Infrastructure
-      { key: "Database", value: "PostgreSQL · MySQL · Redis", color: "mauve" },
-      { key: "DevOps", value: "Docker · Linux · AWS · Bash", color: "mauve" },
+    // ML/AI
+    {
+      key: "ML",
+      value: "PyTorch · scikit-learn · LLMs · Agents · RAG · NLP",
+      color: "green",
+    },
+    {
+      key: "Tools",
+      value: "HuggingFace · Ollama · FastAPI · Streamlit ",
+      color: "green",
+    },
 
-      // Contact
-      { key: "Site", value: "3p5ilon.github.io", color: "peach" },
-      { key: "Email", value: "log3p5ilon@gmail.com", color: "peach" },
-    ],
+    // Infrastructure
+    { key: "Database", value: "PostgreSQL · MySQL · Redis", color: "mauve" },
+    { key: "DevOps", value: "Docker · Linux · AWS · Bash", color: "mauve" },
+
+    // Contact
+    { key: "Site", value: "3p5ilon.github.io", color: "peach" },
+    { key: "Email", value: "log3p5ilon@gmail.com", color: "peach" },
   ],
 
   options: {
