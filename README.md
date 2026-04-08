@@ -1,76 +1,98 @@
-# ProfileFetch
+# profilefetch
 
-A terminal fastfetch style SVG generator for your GitHub Profile readme.
+Generate a fastfetch-style SVG card for your GitHub profile README.
 
 ![preview](profilefetch.svg)
 
-## Quick Setup
-
-1. Fork or use as template (repo name = your GitHub username)
-2. Edit the source files in `src/` (see Customization below).
-3. Generate your SVG with one command:
+## Setup
 
 ```bash
+git clone https://github.com/3p5ilon/profilefetch
+cd profilefetch
 node src/generate.js
 ```
 
-## 🛠️ Customization
+Edit `src/config.js` and `src/theme.js`, then re-run to regenerate.
 
-### 📝 `src/config.js` - Content
+## Adding to your profile
 
-#### `info` Array - Your Config
+In your `YOUR_USERNAME/YOUR_USERNAME` repo:
 
-| Option                  | Description                                                      |
-| ----------------------- | ---------------------------------------------------------------- |
-| `{ key, value, color }` | Single stat line                                                 |
-| `[ { ... }, { ... } ]`  | Nested array = auto adds a break between groups                  |
-| `blankBetweenGroups`    | `true` / `false` - Auto-gap when colors differ within same group |
+```html
+<div align="center">
+  <img
+    src="https://raw.githubusercontent.com/YOUR_USERNAME/profilefetch/main/profilefetch.svg"
+  />
+</div>
+```
 
-#### `logo` - Your Logo/Profile
+## `src/config.js`
 
-| Mode         | Description                                                                     |
-| ------------ | ------------------------------------------------------------------------------- |
-| `logo.type`  | `"text"` or `"image"`                                                           |
-| **Text Mode**| Logo file at `src/logo.txt` - adjust size with `logo.fontSize`                 |
-| **Image Mode**| Image at `src/logo.png` (PNG/JPG → Base64) - customize with `width` & `height` |
+### info rows
+
+```js
+user: "Ɛpsilon",
+host: "3p5ilon",
+
+info: [
+  { key: "OS",    value: "Arch Linux",  color: "red"   },
+  { key: "Shell", value: "zsh 5.9",     color: "red"   },
+  { key: "Langs", value: "Python · TS", color: "green" },
+],
+```
+
+Each row takes `{ key, value, color }`. Use `null` to insert a blank line.
 
 **Example:**
 
 ```js
 info: [
-  // Group 1
-  { key: "OS", value: "Arch Linux", color: "blue" },
-  { key: "Shell", value: "zsh", color: "blue" },
-
-  // Auto break here (nested array)
-
-  // Group 2
-  [
-    { key: "Langs", value: "Python · TypeScript · C++ · Astro", color: "green" },
-    { key: "ML", value: "PyTorch · Transformers · XGBoost", color: "green" },
-  ],
+  { key: "Shell", value: "zsh 5.9",     color: "red"   },
+  null, // Explicit spacer
+  { key: "Langs", value: "Python · TS", color: "green" },
 ],
 ```
 
-### 🎨 Theme (`src/theme.js`)
+Set `blankBetweenGroups: true` in `options` to automatically insert blank lines when the item `color` changes.
 
-| Option    | Description                                                                               |
-| --------- | ----------------------------------------------------------------------------------------- |
-| `palette` | Full hex control (currently [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)) |
-| `layout`  | `width`, `padding`, `columnGap`, `lineHeight`                                             |
-| `font`    | Any Google Font (currently [JetBrains Mono](https://www.jetbrains.com/lp/mono/))          |
+### Logo
 
-## 🖇️ Deployment
+**Text mode** — put any ASCII art in `src/logo.txt`:
 
-Add to `username/README.md` (repo must match your GitHub username)
+```js
+logo: {
+  type: "text",
+  text: { file: "logo.txt", color: "sky", fontSize: 13 },
+}
+```
 
-```md
-<div align="center">
-  <img
-    src="https://raw.githubusercontent.com/USERNAME/USERNAME/main/profilefetch.svg"
-    alt="ProfileFetch"
-  />
-</div>
+**Image mode** — put a PNG or JPG in `src/`:
+
+```js
+logo: {
+  type: "image",
+  image: { path: "logo.png", width: 250, height: 250 },
+}
+```
+
+## `src/theme.js`
+
+### Colors
+
+The default palette is [Catppuccin Mocha](https://github.com/catppuccin/catppuccin). Change any hex value in `palette` to retheme everything.
+
+### Font
+
+Any monospace Google Font works. Update `import`, `family`, and `charRatio` in theme.js.
+
+### Layout
+
+```js
+layout: {
+  width:       820,  // 800–820px fits GitHub profile
+  columnGap:   32,   // gap between logo and info column
+  lineHeight:  19,
+}
 ```
 
 ## License
