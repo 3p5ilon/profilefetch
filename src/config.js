@@ -29,20 +29,20 @@ module.exports = {
     showSwatches: true,
   },
 
-  // ASCII/Image config
-  ascii: {
+  // Logo Graphic config (Text or Image)
+  logo: {
     type: "image", // Toggle: "text" | "image"
 
-    // Config for classic ASCII text mode
+    // Config for classic text-based logo mode
     text: {
-      file: "ascii.txt",
+      file: "logo.txt",
       color: "sky",
       fontSize: 0, // 0 = use theme default, or set a custom size (e.g. 10)
     },
 
-    // Config for PNG/JPG image mode
+    // Config for PNG/JPG image logo mode
     image: {
-      path: "profile.png",
+      path: "logo.png",
       width: 250,
       height: 250,
     },

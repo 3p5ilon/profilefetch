@@ -29,14 +29,14 @@ const svgText = (x, y, fill, content, bold = false, size = fontSize) => {
 const strPx = (str) => Math.round(str.length * charWidth);
 const spacePx = strPx(" "); // Cached space width
 
-// Handle Graphic Asset Loading
-const { type: asciiType, text: textCfg, image: imageCfg } = cfg.ascii;
-const isImageMode = asciiType === "image";
+// Handle Logo Graphic Asset Loading (Image or Text)
+const { type: logoType, text: textCfg, image: imageCfg } = cfg.logo;
+const isImageMode = logoType === "image";
 
-let asciiLines = [];
+let logoLines = [];
 let embeddedImage = "";
-let maxAsciiPx = 0;
-let asciiContentHeight = 0;
+let maxGraphicPx = 0;
+let graphicContentHeight = 0;
 
 if (isImageMode) {
   // Mode: High-quality Image Embedding (Base64)
@@ -44,18 +44,18 @@ if (isImageMode) {
   const ext = path.extname(imgPath).slice(1).toLowerCase() || "png";
   const buffer = fs.readFileSync(imgPath);
   embeddedImage = `data:image/${ext};base64,${buffer.toString("base64")}`;
-  maxAsciiPx = imageCfg.width;
-  asciiContentHeight = imageCfg.height;
+  maxGraphicPx = imageCfg.width;
+  graphicContentHeight = imageCfg.height;
 } else {
-  // Mode: Classic ASCII Art Parsing
-  const asciiFile = path.resolve(ROOT, "src", textCfg.file);
-  const rawLines = fs.readFileSync(asciiFile, "utf8").trimEnd().split(/\r?\n/);
+  // Mode: Classic Text-based Logo Art Parsing
+  const textFile = path.resolve(ROOT, "src", textCfg.file);
+  const rawLines = fs.readFileSync(textFile, "utf8").trimEnd().split(/\r?\n/);
 
-  // Strip trailing invisible blanks and visually crop ASCII bounding box
-  asciiLines = rawLines.map(line => line.replace(/[\s\u2800]+$/, ""));
+  // Strip trailing invisible blanks and visually crop logo bounding box
+  logoLines = rawLines.map(line => line.replace(/[\s\u2800]+$/, ""));
   
   let minLeading = Infinity;
-  for (const line of asciiLines) {
+  for (const line of logoLines) {
     if (line.length === 0) continue;
     const match = line.match(/^[\s\u2800]+/);
     const leadingCount = match ? match[0].length : 0;
@@ -64,24 +64,24 @@ if (isImageMode) {
   if (minLeading === Infinity) minLeading = 0;
 
   if (minLeading > 0) {
-    asciiLines = asciiLines.map(line => line.length >= minLeading ? line.substring(minLeading) : line);
+    logoLines = logoLines.map(line => line.length >= minLeading ? line.substring(minLeading) : line);
   }
 
-  // Calculate section-specific metrics for independent ASCII scaling
-  const asciiFontSize = textCfg.fontSize > 0 ? textCfg.fontSize : fontSize;
-  const asciiCharWidth = asciiFontSize * charRatio;
-  const asciiLineHeight = textCfg.fontSize > 0 ? Math.round((textCfg.fontSize / fontSize) * lineHeight) : lineHeight;
+  // Calculate section-specific metrics for independent text scaling
+  const textFontSize = textCfg.fontSize > 0 ? textCfg.fontSize : fontSize;
+  const textCharWidth = textFontSize * charRatio;
+  const textLineHeight = textCfg.fontSize > 0 ? Math.round((textCfg.fontSize / fontSize) * lineHeight) : lineHeight;
 
-  const maxChars = Math.max(0, ...asciiLines.map(line => line.length));
-  maxAsciiPx = Math.round(maxChars * asciiCharWidth);
-  asciiContentHeight = asciiLines.length * asciiLineHeight;
+  const maxChars = Math.max(0, ...logoLines.map(line => line.length));
+  maxGraphicPx = Math.round(maxChars * textCharWidth);
+  graphicContentHeight = logoLines.length * textLineHeight;
   
-  // Store height-scaling meta for the rendering loop
-  textCfg._render = { fontSize: asciiFontSize, lineHeight: asciiLineHeight };
+  // Store rendering metadata on the config object
+  textCfg._render = { fontSize: textFontSize, lineHeight: textLineHeight };
 }
 
-// Compute Info Column X Position
-const infoColX = layout.paddingLeft + maxAsciiPx + layout.columnGap;
+// Compute Info Column X Position based on dynamic graphic width
+const infoColX = layout.paddingLeft + maxGraphicPx + layout.columnGap;
 
 const buildRows = (rawInfo, autoBlank) => {
   let prevColor = null;
@@ -198,13 +198,13 @@ if (options.showSwatches) {
 
 const assetEls = isImageMode
   ? [`<image x="${layout.paddingLeft}" y="${startY}" width="${imageCfg.width}" height="${imageCfg.height}" href="${embeddedImage}"/>`]
-  : asciiLines.map((line, i) =>
+  : logoLines.map((line, i) =>
       svgText(layout.paddingLeft, startY + i * textCfg._render.lineHeight, color(textCfg.color), line, false, textCfg._render.fontSize)
     );
 
 const svgH = Math.max(
   startY + row * lineHeight + (options.showSwatches ? lineHeight + 28 : 0) + layout.paddingBottom,
-  startY + asciiContentHeight + layout.paddingBottom
+  startY + graphicContentHeight + layout.paddingBottom
 );
 
 const svg = [
@@ -221,10 +221,7 @@ const svg = [
   `</svg>`,
 ].join("\n");
 
-const outDir = path.join(ROOT, "output");
-if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-
-const outPath = path.join(outDir, "profilefetch.svg");
+const outPath = path.join(ROOT, "profilefetch.svg");
 fs.writeFileSync(outPath, svg, "utf8");
 
-console.log(`✓  output/profilefetch.svg  (${svgW} × ${svgH}px)`);
+console.log(`✓  profilefetch.svg  (${svgW} × ${svgH}px)`);

@@ -2,7 +2,7 @@
 
 A terminal fastfetch style SVG generator for your GitHub Profile readme.
 
-![preview](output/profilefetch.svg)
+![preview](profilefetch.svg)
 
 ## Quick Setup
 
@@ -26,13 +26,13 @@ node src/generate.js
 | `[ { ... }, { ... } ]`  | Nested array = auto adds a break between groups                  |
 | `blankBetweenGroups`    | `true` / `false` - Auto-gap when colors differ within same group |
 
-#### `ascii` - Your Logo/Profile
+#### `logo` - Your Logo/Profile
 
-| Mode           | Description                                                                       |
-| -------------- | --------------------------------------------------------------------------------- |
-| `ascii.type`   | `"text"` or `"image"`                                                             |
-| **Text Mode**  | ASCII file at `src/ascii.txt` - adjust size with `ascii.fontSize`                 |
-| **Image Mode** | Image at `src/profile.png` (PNG/JPG → Base64) - customize with `width` & `height` |
+| Mode         | Description                                                                     |
+| ------------ | ------------------------------------------------------------------------------- |
+| `logo.type`  | `"text"` or `"image"`                                                           |
+| **Text Mode**| Logo file at `src/logo.txt` - adjust size with `logo.fontSize`                 |
+| **Image Mode**| Image at `src/logo.png` (PNG/JPG → Base64) - customize with `width` & `height` |
 
 **Example:**
 
@@ -67,7 +67,7 @@ Add to `username/README.md` (repo must match your GitHub username)
 ```md
 <div align="center">
   <img
-    src="https://raw.githubusercontent.com/YOUR_USERNAME/profilefetch/main/output/profilefetch.svg"
+    src="https://raw.githubusercontent.com/USERNAME/USERNAME/main/profilefetch.svg"
     alt="ProfileFetch"
   />
 </div>
