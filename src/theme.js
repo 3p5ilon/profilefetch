@@ -61,8 +61,8 @@ module.exports = {
     width: 820, 
     paddingLeft: 32,
     paddingRight: 32,
-    paddingTop: 34,
-    paddingBottom: 34,
+    paddingTop: 36,
+    paddingBottom: 36,
     columnGap: 32, // Space between ascii/img and columns
     lineHeight: 19, // Vertical space between text entries
   },
