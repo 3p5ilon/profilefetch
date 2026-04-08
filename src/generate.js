@@ -23,7 +23,10 @@ const { lineHeight, paddingTop: startY, width: svgW } = layout;
 const svgText = (x, y, fill, content, bold = false, size = fontSize) => {
   const sizeAttr = size !== fontSize ? ` font-size="${size}"` : "";
   const weightAttr = bold ? ` font-weight="${keyWeight}"` : "";
-  return `<text x="${x}" y="${y}" fill="${fill}" class="f"${sizeAttr}${weightAttr} xml:space="preserve">${esc(content)}</text>`;
+  // Round x/y for clean SVG source, but allow decimals for high-precision logo alignment
+  const xPos = Number.isInteger(x) ? x : x.toFixed(3);
+  const yPos = Number.isInteger(y) ? y : y.toFixed(3);
+  return `<text x="${xPos}" y="${yPos}" fill="${fill}" class="f"${sizeAttr}${weightAttr} xml:space="preserve">${esc(content)}</text>`;
 };
 
 const strPx = (str) => Math.round(str.length * charWidth);
@@ -67,17 +70,16 @@ if (isImageMode) {
     logoLines = logoLines.map(line => line.length >= minLeading ? line.substring(minLeading) : line);
   }
 
-  // Calculate section-specific metrics for independent text scaling
+  // Calculate a scale factor for vector-based logo scaling
   const textFontSize = textCfg.fontSize > 0 ? textCfg.fontSize : fontSize;
-  const textCharWidth = textFontSize * charRatio;
-  const textLineHeight = textCfg.fontSize > 0 ? Math.round((textCfg.fontSize / fontSize) * lineHeight) : lineHeight;
+  const logoScale = textFontSize / fontSize;
 
+  // Horizontal/Vertical metrics scale perfectly via the SVG transform
   const maxChars = Math.max(0, ...logoLines.map(line => line.length));
-  maxGraphicPx = Math.round(maxChars * textCharWidth);
-  graphicContentHeight = logoLines.length * textLineHeight;
+  maxGraphicPx = maxChars * charWidth * logoScale;
+  graphicContentHeight = logoLines.length * lineHeight * logoScale;
   
-  // Store rendering metadata on the config object
-  textCfg._render = { fontSize: textFontSize, lineHeight: textLineHeight };
+  textCfg._render = { scale: logoScale };
 }
 
 // Compute Info Column X Position based on dynamic graphic width
@@ -96,7 +98,7 @@ const buildRows = (rawInfo, autoBlank) => {
       for (const item of entry) {
         result.push({ type: "data", key: item.key, value: item.value, keyColor: item.color });
       }
-      prevColor = null; // Reset color tracking between logical blocks
+      prevColor = null; 
       continue;
     }
 
@@ -123,7 +125,6 @@ const infoEls = [];
 let row = 0;
 const currentY = () => startY + row * lineHeight;
 
-// Title: user@host
 const { user, host } = cfg;
 const sep = options.userHostSep || "@";
 const userPx = strPx(user);
@@ -137,11 +138,9 @@ infoEls.push(
 );
 row++;
 
-// Title underline matching exact length
 infoEls.push(svgText(infoColX, currentY(), color("text"), "-".repeat(title.length)));
 row++;
 
-// Info rows formatting
 for (const r of renderedRows) {
   if (r.type === "blank") {
     row++;
@@ -170,9 +169,8 @@ for (const r of renderedRows) {
   }
   if (currentLine) valueLines.push(currentLine);
 
-  // Render text blocks sequentially on new rows
   if (valueLines.length === 0) {
-    row++; // Failsafe empty value
+    row++;
   } else {
     valueLines.forEach(line => {
       infoEls.push(svgText(startValueX, currentY(), color("text"), line));
@@ -181,7 +179,6 @@ for (const r of renderedRows) {
   }
 }
 
-// Color Swatches
 const swatchEls = [];
 if (options.showSwatches) {
   const { swatches } = theme;
@@ -198,9 +195,13 @@ if (options.showSwatches) {
 
 const assetEls = isImageMode
   ? [`<image x="${layout.paddingLeft}" y="${startY}" width="${imageCfg.width}" height="${imageCfg.height}" href="${embeddedImage}"/>`]
-  : logoLines.map((line, i) =>
-      svgText(layout.paddingLeft, startY + i * textCfg._render.lineHeight, color(textCfg.color), line, false, textCfg._render.fontSize)
-    );
+  : [
+      `<g transform="translate(${layout.paddingLeft}, ${startY}) scale(${textCfg._render.scale}) translate(${-layout.paddingLeft}, ${-startY})">`,
+      ...logoLines.map((line, i) =>
+        svgText(layout.paddingLeft, startY + i * lineHeight, color(textCfg.color), line)
+      ),
+      `</g>`
+    ];
 
 const svgH = Math.max(
   startY + row * lineHeight + (options.showSwatches ? lineHeight + 28 : 0) + layout.paddingBottom,

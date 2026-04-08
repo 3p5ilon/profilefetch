@@ -29,18 +29,18 @@ module.exports = {
     showSwatches: true,
   },
 
-  // Logo Graphic config (Text or Image)
+  // Logo Graphic config (Text/Image)
   logo: {
-    type: "image", // Toggle: "text" | "image"
+    type: "image", // "text" | "image"
 
-    // Config for classic text-based logo mode
+    // Config for text logo mode (ascii)
     text: {
       file: "logo.txt",
       color: "sky",
-      fontSize: 0, // 0 = use theme default, or set a custom size (e.g. 10)
+      fontSize: 8, // 0 = use theme default, or set a custom size (e.g. 10)
     },
 
-    // Config for PNG/JPG image logo mode
+    // Config for image logo mode (png/jpg)
     image: {
       path: "logo.png",
       width: 250,
