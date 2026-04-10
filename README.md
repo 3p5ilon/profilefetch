@@ -21,14 +21,16 @@ In your `YOUR_USERNAME/YOUR_USERNAME` repo:
 ```html
 <div align="center">
   <img
-    src="https://raw.githubusercontent.com/YOUR_USERNAME/profilefetch/main/profilefetch.svg"
+    src="/profilefetch.svg"
   />
 </div>
 ```
 
-## `src/config.js`
+## Customization
 
-### info rows
+### `src/config.js`
+
+#### info rows
 
 ```js
 user: "Ɛpsilon",
@@ -55,7 +57,7 @@ info: [
 
 Set `blankBetweenGroups: true` in `options` to automatically insert blank lines when the item `color` changes.
 
-### Logo
+#### Logo
 
 **Text mode** — put any ASCII art in `src/logo.txt`:
 
@@ -75,17 +77,17 @@ logo: {
 }
 ```
 
-## `src/theme.js`
+### `src/theme.js`
 
-### Colors
+#### Colors
 
 The default palette is [Catppuccin Mocha](https://github.com/catppuccin/catppuccin). Change any hex value in `palette` to retheme everything.
 
-### Font
+#### Font
 
 Any monospace Google Font works. Update `import`, `family`, and `charRatio` in theme.js.
 
-### Layout
+#### Layout
 
 ```js
 layout: {
